@@ -1,303 +1,189 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Task Manager</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+
+  <!-- Flatpickr CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" />
+
   <style>
     body {
-      font-family: system-ui, Arial, sans-serif;
+      font-family: Arial, sans-serif;
       margin: 0;
-      background: #f5f6fa;
+      padding: 0;
+      background: #f4f6f8;
       color: #333;
     }
+
     header {
-      background: #4CAF50;
+      background: #28a745;
       color: white;
+      padding: 15px;
       text-align: center;
-      padding: 1rem;
-      font-size: 1.3rem;
+      font-size: 1.2rem;
       font-weight: bold;
     }
+
     main {
-      padding: 1rem;
-      max-width: 700px;
+      padding: 20px;
+      max-width: 600px;
       margin: auto;
     }
-    .section {
-      margin-bottom: 1.5rem;
-    }
+
     h2 {
+      margin-top: 20px;
       font-size: 1.1rem;
-      margin-bottom: 0.5rem;
-      color: #444;
     }
+
     input, textarea, button {
       width: 100%;
-      padding: 0.8rem;
-      margin: 0.3rem 0;
+      padding: 10px;
+      margin: 8px 0;
       border: 1px solid #ccc;
-      border-radius: 0.6rem;
+      border-radius: 8px;
       font-size: 1rem;
       box-sizing: border-box;
     }
-    textarea { resize: vertical; min-height: 60px; }
-    button {
-      background: #4CAF50;
-      color: white;
-      border: none;
-      font-weight: 600;
-      cursor: pointer;
-      transition: background 0.2s;
-    }
-    button:hover { background: #43a047; }
-    .btn-danger { background: #e53935; }
-    .btn-danger:hover { background: #c62828; }
-    .btn-secondary { background: #757575; }
-    .btn-secondary:hover { background: #616161; }
 
-    .task-list {
-      display: grid;
-      gap: 0.8rem;
+    textarea {
+      resize: none;
+      height: 60px;
     }
-    .task {
-      background: white;
-      border-radius: 0.8rem;
-      padding: 1rem;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.08);
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
-    }
-    .task-header {
-      font-weight: 600;
-      font-size: 1.05rem;
-    }
-    .task-desc {
-      font-size: 0.95rem;
-      color: #555;
-    }
-    .countdown {
-      font-size: 0.9rem;
+
+    button {
+      cursor: pointer;
       font-weight: bold;
+      border: none;
     }
-    .countdown-urgent { color: #e53935; }
-    .countdown-soon { color: #f57c00; }
+
+    .btn-green {
+      background: #28a745;
+      color: white;
+    }
+
+    .btn-red {
+      background: #dc3545;
+      color: white;
+    }
+
+    .task-card {
+      background: white;
+      border-radius: 12px;
+      padding: 15px;
+      margin: 10px 0;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
 
     .task-actions {
       display: flex;
-      flex-wrap: wrap;
-      gap: 0.4rem;
-    }
-    .task-actions button {
-      flex: 1;
-      min-width: 45%;
+      gap: 10px;
+      margin-top: 10px;
     }
 
-    /* Modal */
-    .modal {
-      display: none;
-      position: fixed;
-      top:0; left:0; right:0; bottom:0;
-      background: rgba(0,0,0,0.4);
-      justify-content: center;
-      align-items: center;
-      z-index: 1000;
-    }
-    .modal-content {
-      background: #fff;
-      border-radius: 1rem;
-      padding: 1.5rem;
-      max-width: 400px;
-      width: 90%;
-    }
-    .modal-header {
-      font-weight: 600;
-      margin-bottom: 1rem;
-    }
-    .modal-close {
-      float: right;
-      cursor: pointer;
-      font-size: 1.2rem;
-    }
-
-    /* Toast */
-    #toast {
-      visibility: hidden;
-      min-width: 200px;
-      background: #333;
-      color: #fff;
-      text-align: center;
+    /* ✅ Fix Date/Time Input Style */
+    #taskDateTime,
+    #editTaskDateTime {
+      width: 100%;
+      max-width: 100%;
+      padding: 10px;
+      font-size: 1rem;
+      border: 1px solid #ccc;
       border-radius: 8px;
-      padding: 12px;
-      position: fixed;
-      bottom: 30px;
-      left: 50%;
-      transform: translateX(-50%);
-      z-index: 2000;
+      box-sizing: border-box;
     }
-    #toast.show { visibility: visible; animation: fadein 0.5s, fadeout 0.5s 2.5s; }
-    @keyframes fadein { from{bottom:10px;opacity:0} to{bottom:30px;opacity:1} }
-    @keyframes fadeout { from{bottom:30px;opacity:1} to{bottom:10px;opacity:0} }
 
-    /* Mobile tweaks */
-    @media(max-width: 480px) {
-      header { font-size: 1.1rem; padding: 0.8rem; }
-      .task { padding: 0.8rem; }
-      .task-actions button { font-size: 0.9rem; padding: 0.6rem; }
+    /* ✅ Improve Flatpickr Popup */
+    .flatpickr-calendar {
+      z-index: 9999 !important;
+      width: 100% !important;
+      max-width: 360px;
+      border-radius: 10px;
+    }
+
+    .flatpickr-time input {
+      font-size: 1rem;
+    }
+
+    /* ✅ Flatpickr Green Theme */
+    .flatpickr-day.selected,
+    .flatpickr-day.startRange,
+    .flatpickr-day.endRange,
+    .flatpickr-day.selected.inRange,
+    .flatpickr-day.startRange.inRange,
+    .flatpickr-day.endRange.inRange,
+    .flatpickr-day.selected:focus,
+    .flatpickr-day.startRange:focus,
+    .flatpickr-day.endRange:focus,
+    .flatpickr-day.selected:hover,
+    .flatpickr-day.startRange:hover,
+    .flatpickr-day.endRange:hover {
+      background: #28a745 !important;
+      border-color: #28a745 !important;
+      color: #fff !important;
+    }
+
+    .flatpickr-months .flatpickr-month {
+      background: #28a745 !important;
+      color: white;
+      border-radius: 8px 8px 0 0;
+    }
+
+    .flatpickr-time input:hover,
+    .flatpickr-time input:focus {
+      border-color: #28a745;
+    }
+
+    .flatpickr-time .flatpickr-am-pm {
+      color: #28a745;
     }
   </style>
 </head>
 <body>
   <header>Task Manager</header>
   <main>
-    <div class="section">
-      <h2>Add Task</h2>
-      <input type="text" id="taskTitle" placeholder="Task title">
-      <textarea id="taskDesc" placeholder="Task description (optional)"></textarea>
-      <input type="text" id="taskDate" placeholder="Select Date & Time">
-      <button id="addTaskBtn">Add Task</button>
-      <button id="clearActiveBtn" class="btn-danger">Clear Active Tasks</button>
-    </div>
+    <h2>Add Task</h2>
+    <input type="text" id="taskTitle" placeholder="Task title" />
+    <textarea id="taskDescription" placeholder="Task description (optional)"></textarea>
+    <input type="text" id="taskDateTime" placeholder="Select date & time" readonly />
+    <button id="addTaskBtn" class="btn-green">Add Task</button>
+    <button id="clearTasksBtn" class="btn-red">Clear Active Tasks</button>
 
-    <div class="section">
-      <h2>Active Tasks</h2>
-      <div id="taskList" class="task-list"></div>
-    </div>
+    <h2>Active Tasks</h2>
+    <div id="activeTasks"></div>
 
-    <div class="section">
-      <h2>History</h2>
-      <div id="historyList" class="task-list"></div>
-    </div>
+    <h2>History</h2>
+    <div id="taskHistory"></div>
   </main>
 
-  <!-- Edit Modal -->
-  <div id="editModal" class="modal">
-    <div class="modal-content">
-      <span class="modal-close" id="modalClose">&times;</span>
-      <div class="modal-header">Edit Task</div>
-      <input type="text" id="editTitle">
-      <textarea id="editDesc"></textarea>
-      <input type="text" id="editDate">
-      <button id="saveEditBtn">Save Changes</button>
+  <!-- Edit Task Modal -->
+  <div id="editModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); align-items:center; justify-content:center;">
+    <div style="background:white; padding:20px; border-radius:12px; width:90%; max-width:400px;">
+      <h2>Edit Task</h2>
+      <input type="text" id="editTaskTitle" />
+      <textarea id="editTaskDescription"></textarea>
+      <input type="text" id="editTaskDateTime" placeholder="Select date & time" readonly />
+      <button id="saveEditBtn" class="btn-green">Save</button>
+      <button id="cancelEditBtn" class="btn-red">Cancel</button>
     </div>
   </div>
 
-  <div id="toast"></div>
+  <!-- Flatpickr JS -->
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+  <script>
+    // Initialize Flatpickr for both fields
+    flatpickr("#taskDateTime", {
+      enableTime: true,
+      dateFormat: "Y-m-d H:i",
+      minDate: "today"
+    });
 
-<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-<script>
-let tasks = JSON.parse(localStorage.getItem('tasks')||'[]');
-let history = JSON.parse(localStorage.getItem('history')||'[]');
-const taskTitle=document.getElementById('taskTitle'),
-      taskDesc=document.getElementById('taskDesc'),
-      addTaskBtn=document.getElementById('addTaskBtn'),
-      clearActiveBtn=document.getElementById('clearActiveBtn'),
-      taskList=document.getElementById('taskList'),
-      historyList=document.getElementById('historyList'),
-      editModal=document.getElementById('editModal'),
-      editTitle=document.getElementById('editTitle'),
-      editDesc=document.getElementById('editDesc'),
-      editDate=document.getElementById('editDate'),
-      saveEditBtn=document.getElementById('saveEditBtn'),
-      modalClose=document.getElementById('modalClose'),
-      toast=document.getElementById('toast');
-
-let taskDatePicker = flatpickr("#taskDate",{enableTime:true,dateFormat:"Y-m-d H:i"});
-let editDatePicker = flatpickr("#editDate",{enableTime:true,dateFormat:"Y-m-d H:i"});
-let currentEditId=null;
-
-function save(){localStorage.setItem('tasks',JSON.stringify(tasks));localStorage.setItem('history',JSON.stringify(history));}
-function showToast(msg){toast.textContent=msg;toast.className="show";setTimeout(()=>toast.className="",3000);}
-function getTimeLeft(dt){let d=new Date(dt)-new Date();if(d<=0)return{text:"Expired",diff:d};let m=Math.floor(d/60000)%60,h=Math.floor(d/3600000),s=Math.floor(d/1000)%60;return{text:`${h}h ${m}m ${s}s`,diff:d};}
-
-function renderTasks(){
-  taskList.innerHTML="";
-  tasks.forEach(t=>{
-    let el=document.createElement('div');el.className="task";
-    el.innerHTML=`<div class="task-header">${t.title}</div>
-      <div class="task-desc">${t.description||''}</div>
-      <div class="countdown" id="cd-${t.id}"></div>
-      <div class="task-actions">
-        <button onclick="markDone(${t.id})">Done</button>
-        <button class="btn-secondary" onclick="markSkip(${t.id})">Skip</button>
-        <button onclick="openEditModal(${t.id})">Edit</button>
-        <button class="btn-danger" onclick="deleteTask(${t.id})">Delete</button>
-      </div>`;
-    taskList.appendChild(el);
-  });
-
-  historyList.innerHTML="";
-  history.forEach(h=>{
-    let el=document.createElement('div');el.className="task";
-    el.innerHTML=`<div class="task-header">${h.title} (${h.status})</div>
-      <div class="task-desc">${h.description||''}</div>
-      <div class="task-actions">
-        <button onclick="reactivateTask(${h.id})">Reactivate</button>
-        <button class="btn-danger" onclick="deleteHistory(${h.id})">Delete</button>
-      </div>`;
-    historyList.appendChild(el);
-  });
-}
-
-function updateCountdowns(){
-  tasks.forEach(t=>{
-    let el=document.getElementById("cd-"+t.id);
-    if(el){
-      let tl=getTimeLeft(t.datetime);
-      el.innerText=tl.text;
-      el.classList.remove("countdown-urgent","countdown-soon");
-      if(t.status==="pending"){
-        if(tl.diff<3600000)el.classList.add("countdown-urgent");
-        else if(tl.diff<86400000)el.classList.add("countdown-soon");
-        else el.style.color="green";
-      }
-    }
-  });
-}
-
-function addTask(){
-  if(!taskTitle.value||!taskDatePicker.selectedDates[0]) return showToast("Title and date/time required");
-  let id=Date.now();
-  tasks.push({id,title:taskTitle.value,description:taskDesc.value,datetime:taskDatePicker.selectedDates[0].toISOString(),status:"pending"});
-  save();renderTasks();
-  taskTitle.value="";taskDesc.value="";taskDatePicker.clear();
-  showToast("Task added!");
-}
-
-function markDone(id){let t=tasks.find(x=>x.id===id);t.status="done";history.push({...t});tasks=tasks.filter(x=>x.id!==id);save();renderTasks();showToast("Task marked done!");}
-function markSkip(id){let t=tasks.find(x=>x.id===id);t.status="skipped";history.push({...t});tasks=tasks.filter(x=>x.id!==id);save();renderTasks();showToast("Task skipped!");}
-function deleteTask(id){tasks=tasks.filter(x=>x.id!==id);save();renderTasks();showToast("Task deleted!");}
-function deleteHistory(id){history=history.filter(x=>x.id!==id);save();renderTasks();showToast("History item deleted!");}
-function reactivateTask(id){let h=history.find(x=>x.id===id);tasks.push({...h,id:Date.now(),status:"pending"});save();renderTasks();showToast("Task reactivated!");}
-function clearActive(){tasks=[];save();renderTasks();showToast("Active tasks cleared!");}
-
-function openEditModal(id){
-  currentEditId=id;
-  let t=tasks.find(x=>x.id===id);
-  editTitle.value=t.title;
-  editDesc.value=t.description;
-  editDatePicker.setDate(new Date(t.datetime),true,"Y-m-d H:i");
-  editModal.style.display="flex";
-}
-
-modalClose.onclick=()=>editModal.style.display="none";
-window.onclick=e=>{if(e.target==editModal) editModal.style.display="none";}
-
-saveEditBtn.onclick=()=>{
-  if(!editTitle.value||!editDatePicker.selectedDates[0]) return showToast("Title and date/time required");
-  let t=tasks.find(x=>x.id===currentEditId);
-  t.title=editTitle.value;
-  t.description=editDesc.value;
-  t.datetime=editDatePicker.selectedDates[0].toISOString();
-  save();renderTasks();editModal.style.display="none";showToast("Task updated!");
-};
-
-addTaskBtn.addEventListener("click",addTask);
-clearActiveBtn.addEventListener("click",clearActive);
-renderTasks();
-setInterval(updateCountdowns,1000);
-</script>
+    flatpickr("#editTaskDateTime", {
+      enableTime: true,
+      dateFormat: "Y-m-d H:i",
+      minDate: "today"
+    });
+  </script>
 </body>
 </html>
