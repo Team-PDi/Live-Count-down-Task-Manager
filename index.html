@@ -6,15 +6,14 @@
   <title>Task Manager</title>
 
   <!-- Flatpickr CSS -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 
   <style>
     body {
       font-family: Arial, sans-serif;
+      background: #f5f6fa;
       margin: 0;
       padding: 0;
-      background: #f4f6f8;
-      color: #333;
     }
 
     header {
@@ -22,40 +21,47 @@
       color: white;
       padding: 15px;
       text-align: center;
-      font-size: 1.2rem;
+      font-size: 20px;
       font-weight: bold;
     }
 
-    main {
+    .container {
       padding: 20px;
-      max-width: 600px;
+      max-width: 500px;
       margin: auto;
     }
 
-    h2 {
+    h3 {
       margin-top: 20px;
-      font-size: 1.1rem;
+      margin-bottom: 10px;
     }
 
-    input, textarea, button {
-      width: 100%;
-      padding: 10px;
-      margin: 8px 0;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-      font-size: 1rem;
+    input[type="text"],
+    textarea,
+    .flatpickr-input {
+      width: 100% !important;
       box-sizing: border-box;
+      height: 45px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      padding: 10px;
+      font-size: 16px;
+      margin-bottom: 10px;
     }
 
     textarea {
-      resize: none;
       height: 60px;
+      resize: none;
     }
 
     button {
-      cursor: pointer;
-      font-weight: bold;
+      width: 100%;
+      padding: 12px;
+      margin-top: 5px;
+      font-size: 16px;
       border: none;
+      border-radius: 6px;
+      cursor: pointer;
     }
 
     .btn-green {
@@ -70,10 +76,10 @@
 
     .task-card {
       background: white;
-      border-radius: 12px;
+      border-radius: 10px;
       padding: 15px;
-      margin: 10px 0;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      margin-top: 10px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     }
 
     .task-actions {
@@ -82,108 +88,111 @@
       margin-top: 10px;
     }
 
-    /* ✅ Fix Date/Time Input Style */
-    #taskDateTime,
-    #editTaskDateTime {
-      width: 100%;
-      max-width: 100%;
-      padding: 10px;
-      font-size: 1rem;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-      box-sizing: border-box;
-    }
-
-    /* ✅ Improve Flatpickr Popup */
-    .flatpickr-calendar {
-      z-index: 9999 !important;
-      width: 100% !important;
-      max-width: 360px;
-      border-radius: 10px;
-    }
-
-    .flatpickr-time input {
-      font-size: 1rem;
-    }
-
-    /* ✅ Flatpickr Green Theme */
-    .flatpickr-day.selected,
-    .flatpickr-day.startRange,
-    .flatpickr-day.endRange,
-    .flatpickr-day.selected.inRange,
-    .flatpickr-day.startRange.inRange,
-    .flatpickr-day.endRange.inRange,
-    .flatpickr-day.selected:focus,
-    .flatpickr-day.startRange:focus,
-    .flatpickr-day.endRange:focus,
-    .flatpickr-day.selected:hover,
-    .flatpickr-day.startRange:hover,
-    .flatpickr-day.endRange:hover {
-      background: #28a745 !important;
-      border-color: #28a745 !important;
-      color: #fff !important;
-    }
-
-    .flatpickr-months .flatpickr-month {
-      background: #28a745 !important;
-      color: white;
-      border-radius: 8px 8px 0 0;
-    }
-
-    .flatpickr-time input:hover,
-    .flatpickr-time input:focus {
-      border-color: #28a745;
-    }
-
-    .flatpickr-time .flatpickr-am-pm {
-      color: #28a745;
+    .task-actions button {
+      flex: 1;
     }
   </style>
 </head>
 <body>
   <header>Task Manager</header>
-  <main>
-    <h2>Add Task</h2>
-    <input type="text" id="taskTitle" placeholder="Task title" />
-    <textarea id="taskDescription" placeholder="Task description (optional)"></textarea>
-    <input type="text" id="taskDateTime" placeholder="Select date & time" readonly />
-    <button id="addTaskBtn" class="btn-green">Add Task</button>
-    <button id="clearTasksBtn" class="btn-red">Clear Active Tasks</button>
 
-    <h2>Active Tasks</h2>
+  <div class="container">
+    <h3>Add Task</h3>
+    <input id="taskTitle" type="text" placeholder="Task title">
+    <textarea id="taskDescription" placeholder="Task description (optional)"></textarea>
+    <input id="taskDateTime" type="text" placeholder="Select date & time">
+    <button class="btn-green" onclick="addTask()">Add Task</button>
+    <button class="btn-red" onclick="clearActiveTasks()">Clear Active Tasks</button>
+
+    <h3>Active Tasks</h3>
     <div id="activeTasks"></div>
 
-    <h2>History</h2>
+    <h3>History</h3>
     <div id="taskHistory"></div>
-  </main>
-
-  <!-- Edit Task Modal -->
-  <div id="editModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); align-items:center; justify-content:center;">
-    <div style="background:white; padding:20px; border-radius:12px; width:90%; max-width:400px;">
-      <h2>Edit Task</h2>
-      <input type="text" id="editTaskTitle" />
-      <textarea id="editTaskDescription"></textarea>
-      <input type="text" id="editTaskDateTime" placeholder="Select date & time" readonly />
-      <button id="saveEditBtn" class="btn-green">Save</button>
-      <button id="cancelEditBtn" class="btn-red">Cancel</button>
-    </div>
   </div>
 
   <!-- Flatpickr JS -->
   <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
   <script>
-    // Initialize Flatpickr for both fields
+    let tasks = [];
+
+    // Initialize flatpickr for create task
     flatpickr("#taskDateTime", {
       enableTime: true,
       dateFormat: "Y-m-d H:i",
       minDate: "today"
     });
 
-    flatpickr("#editTaskDateTime", {
-      enableTime: true,
-      dateFormat: "Y-m-d H:i",
-      minDate: "today"
-    });
+    function addTask() {
+      const title = document.getElementById("taskTitle").value.trim();
+      const desc = document.getElementById("taskDescription").value.trim();
+      const date = document.getElementById("taskDateTime").value;
+
+      if (!title || !date) {
+        alert("Please enter a title and pick a date/time.");
+        return;
+      }
+
+      const task = { id: Date.now(), title, desc, date, status: "active" };
+      tasks.push(task);
+      renderTasks();
+      clearForm();
+    }
+
+    function clearForm() {
+      document.getElementById("taskTitle").value = "";
+      document.getElementById("taskDescription").value = "";
+      document.getElementById("taskDateTime").value = "";
+    }
+
+    function renderTasks() {
+      const activeDiv = document.getElementById("activeTasks");
+      const historyDiv = document.getElementById("taskHistory");
+      activeDiv.innerHTML = "";
+      historyDiv.innerHTML = "";
+
+      tasks.forEach(task => {
+        const card = document.createElement("div");
+        card.className = "task-card";
+        card.innerHTML = `
+          <strong>${task.title}</strong> (${task.status})
+          <p>${task.desc || ""}</p>
+          <small>Due: ${task.date}</small>
+          <div class="task-actions">
+            ${task.status === "active" 
+              ? `<button class="btn-red" onclick="skipTask(${task.id})">Skip</button>` 
+              : `<button class="btn-green" onclick="reactivateTask(${task.id})">Reactivate</button>`}
+            <button class="btn-red" onclick="deleteTask(${task.id})">Delete</button>
+          </div>
+        `;
+        if (task.status === "active") {
+          activeDiv.appendChild(card);
+        } else {
+          historyDiv.appendChild(card);
+        }
+      });
+    }
+
+    function skipTask(id) {
+      tasks = tasks.map(task => task.id === id ? { ...task, status: "skipped" } : task);
+      renderTasks();
+    }
+
+    function reactivateTask(id) {
+      tasks = tasks.map(task => task.id === id ? { ...task, status: "active" } : task);
+      renderTasks();
+    }
+
+    function deleteTask(id) {
+      tasks = tasks.filter(task => task.id !== id);
+      renderTasks();
+    }
+
+    function clearActiveTasks() {
+      tasks = tasks.map(task => task.status === "active" ? { ...task, status: "skipped" } : task);
+      renderTasks();
+    }
   </script>
 </body>
 </html>
